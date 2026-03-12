@@ -9,7 +9,7 @@ services:
       - DEBUG=false
       - ALLOWED_HOSTS=isabaq.kz,www.isabaq.kz,localhost,127.0.0.1
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - DJANGO_DB_PATH=/app/data/db.sqlite3
       - MEDIA_ROOT=/app/media
     volumes:
