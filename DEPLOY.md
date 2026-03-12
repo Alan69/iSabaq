@@ -5,21 +5,51 @@
 - Docker и Docker Compose
 - Сервер с IP 213.155.23.170 (DNS уже настроен: isabaq.kz, www.isabaq.kz → этот IP)
 
-## Быстрый старт
+## Установка на сервере
+
+### 1. Установить Docker и Docker Compose (Ubuntu/Debian)
 
 ```bash
-# 1. Клонировать репозиторий на сервер
-git clone <repo-url> /opt/edudesk
+# Docker
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER
+# Выйти и зайти в сессию, чтобы группа применилась
+
+# Docker Compose (если не входит в Docker)
+sudo apt update && sudo apt install -y docker-compose-plugin
+```
+
+### 2. Скачать проект
+
+```bash
+sudo mkdir -p /opt/edudesk
+sudo chown $USER:$USER /opt/edudesk
 cd /opt/edudesk
 
-# 2. Создать .env
+git clone https://github.com/Alan69/iSabaq.git .
+```
+
+### 3. Настроить .env
+
+```bash
 cp .env.example .env
-# Отредактировать .env: SECRET_KEY, GEMINI_API_KEY, POSTGRES_PASSWORD
+nano .env   # или vim
+```
 
-# 3. Запустить
+Заполнить:
+- `SECRET_KEY` — случайная строка (минимум 50 символов)
+- `GEMINI_API_KEY` — ключ API Gemini
+- `POSTGRES_PASSWORD` — надёжный пароль для БД
+
+### 4. Запустить
+
+```bash
 docker compose up -d --build
+```
 
-# 4. Создать суперпользователя
+### 5. Создать админа
+
+```bash
 docker compose exec backend python manage.py createsuperuser
 ```
 
