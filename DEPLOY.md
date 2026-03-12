@@ -14,7 +14,7 @@ cd /opt/edudesk
 
 # 2. Создать .env
 cp .env.example .env
-# Отредактировать .env: SECRET_KEY, GEMINI_API_KEY
+# Отредактировать .env: SECRET_KEY, GEMINI_API_KEY, POSTGRES_PASSWORD
 
 # 3. Запустить
 docker compose up -d --build
@@ -47,7 +47,8 @@ sudo certbot certonly --standalone -d isabaq.kz -d www.isabaq.kz
 
 ## Структура
 
-- **backend** — Django + Gunicorn (порт 8000, внутренний)
+- **db** — PostgreSQL 16 (порт 5432, внутренний)
+- **backend** — Django + Gunicorn + WhiteNoise (порт 8000, внутренний)
 - **frontend** — Vite build + Nginx (порт 80, проксирует /api на backend)
 
 ## Обновление
@@ -60,6 +61,9 @@ docker compose up -d --build
 ## Бэкап
 
 ```bash
-# База и медиа
-docker compose exec backend tar czf - /app/data /app/media > backup.tar.gz
+# PostgreSQL
+docker compose exec db pg_dump -U edudesk edudesk > backup.sql
+
+# Медиа
+docker compose exec backend tar czf - /app/media > media_backup.tar.gz
 ```

@@ -1,4 +1,22 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: edudesk-db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-edudesk}
+      - POSTGRES_USER=${POSTGRES_USER:-edudesk}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-edudesk}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-edudesk}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./edudesk_backend
@@ -10,11 +28,16 @@ services:
       - ALLOWED_HOSTS=isabaq.kz,www.isabaq.kz,localhost,127.0.0.1
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - DJANGO_DB_PATH=/app/data/db.sqlite3
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DB:-edudesk}
+      - POSTGRES_USER=${POSTGRES_USER:-edudesk}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-edudesk}
       - MEDIA_ROOT=/app/media
     volumes:
       - backend_media:/app/media
-      - backend_data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
     expose:
       - "8000"
     restart: unless-stopped
@@ -32,4 +55,4 @@ services:
 
 volumes:
   backend_media:
-  backend_data:
+  postgres_data:
