@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./edudesk_backend
+      dockerfile: Dockerfile
+    container_name: edudesk-backend
+    env_file: .env
+    environment:
+      - DEBUG=false
+      - ALLOWED_HOSTS=isabaq.kz,www.isabaq.kz,localhost,127.0.0.1
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DJANGO_DB_PATH=/app/data/db.sqlite3
+      - MEDIA_ROOT=/app/media
+    volumes:
+      - backend_media:/app/media
+      - backend_data:/app/data
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./edudesk_frontend
+      dockerfile: Dockerfile
+    container_name: edudesk-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  backend_media:
+  backend_data:

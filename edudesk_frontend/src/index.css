@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ec5b13;
+  --color-background-light: #f8f6f6;
+  --color-background-dark: #0f172a;
+  --color-card-dark: #1e293b;
+  --color-border-dark: #334155;
+
+  --font-display: "Public Sans", sans-serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+body {
+    font-family: var(--font-display);
+}
+
+.grid-pattern {
+    background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.dark .grid-pattern {
+    background-image: radial-gradient(circle, #334155 1px, transparent 1px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
