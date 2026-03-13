@@ -67,12 +67,20 @@ sudo apt install certbot
 sudo docker compose stop frontend
 sudo certbot certonly --standalone -d isabaq.kz -d www.isabaq.kz
 
-# Использовать host nginx для SSL:
-# 1. В docker-compose.yml изменить ports frontend: "8080:80"
-# 2. Скопировать deploy/nginx-isabaq.conf в /etc/nginx/sites-available/
-# 3. Раскомментировать HTTPS блок в конфиге
-# 4. sudo nginx -t && sudo systemctl reload nginx
-# 5. docker compose up -d
+# 2. Установить nginx на хосте (если ещё нет)
+sudo apt install -y nginx
+
+# 3. Скопировать конфиг и включить сайт
+sudo cp deploy/nginx-isabaq.conf /etc/nginx/sites-available/isabaq.kz
+sudo ln -sf /etc/nginx/sites-available/isabaq.kz /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default   # отключить дефолтный сайт
+
+# 4. Проверить и перезагрузить nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# 5. Запустить docker (frontend теперь на 8080, nginx проксирует 80/443 → 8080)
+cd /opt/edudesk
+docker compose up -d
 ```
 
 ## Структура
